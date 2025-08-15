@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SiburVR — VR обучение профессиям</title>
+  <meta name="description" content="Платформа SiburVR — VR курсы и практики для профессионалов" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================
+       Экран 1: Авторизация (в центре)
+       ============================ -->
+  <div id="auth-screen" class="layer center">
+    <div class="auth-card">
+      <!-- Логотип SiburVR — SVG встроенный (не нужно загружать отдельные картинки) -->
+      <div class="logo-wrap">
+        <!-- Стили логотипа можно менять в styles.css -->
+        <svg class="logo-svg" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg" role="img">
+          <defs>
+            <linearGradient id="lg" x1="0" x2="1">
+              <stop offset="0" stop-color="#0ab29a"/>
+              <stop offset="1" stop-color="#0a7fa6"/>
+            </linearGradient>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect x="0" y="0" width="400" height="80" rx="18" fill="url(#lg)" opacity="0.12"/>
+          <text x="28" y="50" font-family="Segoe UI, Roboto, Arial" font-weight="800" font-size="40" fill="#062e33">Sibur</text>
+          <text x="170" y="50" font-family="Segoe UI, Roboto, Arial" font-weight="800" font-size="40" fill="#ffd166">VR</text>
+          <g filter="url(#glow)" opacity="0.6">
+            <circle cx="340" cy="18" r="10" fill="#9b5de5"/>
+            <circle cx="360" cy="38" r="6" fill="#ff7f50"/>
+          </g>
+        </svg>
+      </div>
+
+      <h2 class="auth-title">Вход в SibuVR</h2>
+      <p class="auth-sub">Введите логин и пароль, чтобы начать обучение</p>
+
+      <label class="field">
+        <span>Логин</span>
+        <input id="login-username" type="text" placeholder="admin" />
+      </label>
+
+      <label class="field">
+        <span>Пароль</span>
+        <input id="login-password" type="password" placeholder="1234" />
+      </label>
+
+      <div class="auth-actions">
+        <button id="btn-login" class="btn primary">Войти</button>
+        <button id="btn-guest" class="btn ghost">Войти как гость</button>
+      </div>
+
+      <p id="auth-error" class="error" aria-live="polite"></p>
+
+      <div class="auth-hint">Тестовые данные: <b>admin</b> / <b>1234</b></div>
+    </div>
+  </div>
+
+  <!-- ============================
+       Экран 2: Короткая анимация загрузки SibuVR
+       (показывается только после успешной авторизации)
+       ============================ -->
+  <div id="splash-screen" class="layer center hidden">
+    <div class="splash-card">
+      <svg class="logo-splash" viewBox="0 0 420 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg2" x1="0" x2="1">
+            <stop offset="0" stop-color="#0ab29a"/>
+            <stop offset="1" stop-color="#0a7fa6"/>
+          </linearGradient>
+        </defs>
+        <rect width="420" height="120" rx="16" fill="url(#lg2)" opacity="0.15"></rect>
+        <text x="28" y="72" font-family="Segoe UI, Roboto, Arial" font-weight="900" font-size="60" fill="#eafdfa">Sibur</text>
+        <text x="220" y="72" font-family="Segoe UI, Roboto, Arial" font-weight="900" font-size="60" fill="#ffd166">VR</text>
+      </svg>
+
+      <div class="splash-anim">
+        <div class="pulse-circle"></div>
+        <div class="pulse-circle delay"></div>
+        <div class="splash-text">Загрузка
+          SiburVR  </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       Основной сайт (по умолчанию скрыт)
+       ============================ -->
+  <div id="app" class="hidden">
+
+    <!-- Навбар -->
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand">
+          <!-- Вставляем маленький логотип (SVG) -->
+          <svg viewBox="0 0 140 34" class="brand-logo">
+            <defs><linearGradient id="bg1" x1="0" x2="1"><stop offset="0" stop-color="#0ab29a"/><stop offset="1" stop-color="#0a7fa6"/></linearGradient></defs>
+            <text x="0" y="24" font-family="Segoe UI" font-size="20" font-weight="800" fill="url(#bg1)">SiburVR<span fill="#ffd166">VR</span></text>
+          </svg>
+        </div>
+
+        <nav class="nav">
+          <a href="#home" class="nav-link">Главная</a>
+          <a href="#courses" class="nav-link">Курсы</a>
+          <a href="#labs" class="nav-link">Лаборатории</a>
+          <a href="#about" class="nav-link">О платформе</a>
+          <a href="#contact" class="nav-link primary-link">Контакты</a>
+        </nav>
+
+        <div class="header-actions">
+          <button id="btn-logout" class="btn small">Выйти</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero: VR фон (canvas) + крупный заголовок -->
+    <section id="home" class="hero">
+      <!-- Фон — canvas. Скрипт генерирует абстрактные "частицы/линзы" -->
+      <canvas id="hero-canvas" class="hero-canvas"></canvas>
+
+      <div class="hero-content container">
+        <div class="hero-left">
+          <h1 class="hero-title">Осваивайте профессии в виртуальной реальности</h1>
+          <p class="hero-lead">Интерактивные симуляции, реальные сценарии, безопасная практика — всё в SibuVR.</p>
+          <div class="hero-cta">
+            <a href="#courses" class="btn primary large">Смотреть курсы</a>
+            <button id="open-demo" class="btn accent large">Открыть демо</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-num">124</div>
+              <div class="stat-label">Курса</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">3.2k</div>
+              <div class="stat-label">Часов практики</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">97%</div>
+              <div class="stat-label">Успешных выпускников</div>
+            </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- Секция Курсов -->
+    <section id="courses" class="section container">
+      <h2 class="section-title">Популярные VR-курсы</h2>
+      <p class="section-sub">Выбери направление, отработай навыки в безопасной виртуальной среде</p>
+
+      <!-- Фильтры -->
+      <div class="filters">
+        <button class="chip active" data-filter="all">Все</button>
+        <button class="chip" data-filter="safety">Безопасность</button>
+        <button class="chip" data-filter="electro">Электрика</button>
+        <button class="chip" data-filter="assembly">Монтаж</button>
+      </div>
+
+      <!-- Сетка карточек (JS заполнит контент) -->
+      <div id="cards" class="cards-grid"></div>
+    </section>
+    <!-- Преимущества -->
+    <section id="about" class="section container">
+      <h2 class="section-title">Почему SibuVR</h2>
+      <div class="adv-grid">
+        <div class="adv-card pop">
+          <h3>Реалистичные сценарии</h3>
+          <p>Точная физика, интерактивные объекты, сложные аварийные сценарии.</p>
+        </div>
+        <div class="adv-card pop">
+          <h3>Модульная система</h3>
+          <p>Добавляй новые курсы, лаборатории и сценарии без проблем.</p>
+        </div>
+        <div class="adv-card pop">
+          <h3>Аналитика прогресса</h3>
+          <p>Слежение за действиями, отчёты и рекомендации для обучающегося.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ + Контакты -->
+    <section id="faq" class="section alt container">
+      <div class="grid-2">
+        <div>
+          <h2 class="section-title">FAQ</h2>
+
+          <div class="accordion">
+            <div class="acc-item">
+              <button class="acc-btn">Нужна ли гарнитура VR?</button>
+              <div class="acc-panel">Для полного опыта — да. Но у многих модулей есть настольный режим для тренировки с мышью и клавиатурой.</div>
+            </div>
+            <div class="acc-item">
+              <button class="acc-btn">Как хранится прогресс?</button>
+              <div class="acc-panel">Демо-версия сохраняет прогресс в localStorage. На сервере — в базе данных (потом можно подключить).</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="section-title">Свяжитесь с нами</h2>
+          <form id="contact-form" class="contact-form">
+            <input name="name" placeholder="Ваше имя" required />
+            <input name="email" placeholder="E-mail" type="email" required />
+            <textarea name="message" rows="4" placeholder="Сообщение"></textarea>
+            <div></div> style="display:flex;gap:10px;align-items:center;">
+              <button class="btn primary" type="submit">Отправить</button>
+              <div class="muted small">Мы ответим в течение 24 часов</div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div>© 2025 SibuVR — демо-платформа</div>
+        <div class="muted small">Дизайн вдохновлён промышленной эстетикой и VR-темой</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Модальное окно курса (динамическое) -->
+  <div id="modal" class="modal hidden" role="dialog" aria-hidden="true">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card elevate" role="document" aria-modal="true">
+      <button id="modal-close" class="modal-close" aria-label="Закрыть">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
+
